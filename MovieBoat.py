@@ -43,6 +43,7 @@ def logout():
 
 @app.route('/login', methods=['POST'])
 def login():
+    print(request.form)
     phone = request.form.get('phone')
     password = request.form.get('password')
 
@@ -51,16 +52,54 @@ def login():
     ret = {}
 
     if not user:
-        ret['code'] = 1
+        ret['code'] = 101
         ret['message'] = '用户不存在'
         return jsonify(ret)
 
     if user.validate_password(password):
-        ret['code'] = 0
+        ret['code'] = 100
         login_user(user)
     else:
-        ret['code'] = 2
+        ret['code'] = 102
         ret['message'] = '密码错误'
+
+    return jsonify(ret)
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    print(request.form)
+    username = request.form.get('username')
+    password = request.form.get('password')
+    phone = request.form.get('phone')
+    print(username, password, phone)
+    # avatar=request.files
+    ret = {}
+
+    user = User.query.filter_by(phone_number=phone).first()
+    if user:
+        ret['code'] = 201
+        ret['message'] = '此手机已经被注册'
+        return jsonify(ret)
+
+    user = User.query.filter_by(username=username).first()
+    if user:
+        ret['code'] = 202
+        ret['message'] = '此用户名已经被注册'
+        return jsonify(ret)
+
+    user = User(
+        username=username,
+        phone_number=phone,
+        password=password
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    login_user(user)
+
+    ret['code'] = 200
+    ret['message'] = '注册成功'
 
     return jsonify(ret)
 
