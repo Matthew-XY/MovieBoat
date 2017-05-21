@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}电影资源网站{% endblock %}
+
+{% block content %}
+
+    <div>
+        <br> <br> <br> <br> <br> <br> <br><br><br>
+    </div>
+
+    <div class="ui container center aligned">
+        <div class="ui search">
+            <form action="/search" method="get">
+                <h3 class="ui header">电源船是一个在线付费视频的网站</h3>
+                <div class="ui fluid huge action input">
+                    <input type="text" placeholder="请输入电影、电视剧、纪录片名">
+                    <button type="submit" value="search" class="ui huge secondary submit button">搜索</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div>
+        <br> <br> <br> <br> <br> <br> <br><br><br>
+    </div>
+
+
+
+    <div class="ui link cards six">
+        {% for movie in movies %}
+            <div class="card">
+                <div class="image">
+                    <img src="{{ movie.cover }}">
+                </div>
+                <div class="content">
+                    <div class="header"> {{ movie.title }}</div>
+                    <div class="meta">
+                        <a>剧情</a>
+                        <a>悬疑</a>
+                        <a>探险</a>
+                    </div>
+                    <div class="description">{{ movie.staffs[0:20] }}</div>
+                </div>
+                <div class="extra content">
+                    <span class="right floated">￥5.0</span>
+                    <span><i class="user icon"></i> 75 条评论</span>
+                </div>
+            </div>
+            <br><br>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
