@@ -8,12 +8,14 @@ from uuid import uuid1
 from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
 
+from flask_login import UserMixin
+
 from flask_app import app
 
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.String(32), primary_key=True)
     username = db.Column(db.String(64), unique=True)
     password_hash = db.Column(db.String(512), nullable=False)
