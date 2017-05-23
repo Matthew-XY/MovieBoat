@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session, jsonify
+from flask import render_template, request, redirect, url_for, flash, session, jsonify, abort
 from flask_login import current_user, login_user, logout_user, LoginManager, login_required
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
@@ -9,12 +9,10 @@ from flask_app import app
 
 from init_db import gen_user, get_movie
 
-
 # migrate = Migrate(app, db)
 # manager = Manager(app)
 # manager.add_command('db', MigrateCommand)
 # manager.run()
-
 
 
 
@@ -64,6 +62,14 @@ def login():
         ret['message'] = '密码错误'
 
     return jsonify(ret)
+
+
+@app.route('/movie/<movie_id>', methods=['GET'])
+def movie_detail(movie_id):
+    movie = Movie.query.filter_by(brief_id=movie_id).first()
+    if not movie:
+        abort(404)
+    return render_template('movie_detail.html', movie=movie, user=current_user)
 
 
 @app.route('/register', methods=['POST'])

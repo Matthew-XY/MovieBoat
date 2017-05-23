@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block content %}
+
+    <style>
+        .tiny-title {
+            color: #8e6560 !important;
+            display: block;
+            margin-bottom: .5em;
+        }
+
+        .hover-shadow {
+            border-radius: 6px;
+            backface-visibility: hidden;
+            overflow: hidden;
+            border: 1px solid #ececec;
+            transition: 0.35s ease-out;
+            -webkit-transition: 0.35s ease-out;
+            -moz-transition: 0.35s ease-out;
+        }
+
+        .hover-shadow:hover {
+            transform: translate3d(0, -10px, 0);
+            -webkit-transform: translate3d(0, -10px, 0);
+            box-shadow: 0 23px 40px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+
+
+    <div class="ui grid" style="margin-top: auto">
+
+        <div class="three wide column">
+
+        </div>
+
+        <div class="three wide column">
+            <div class="hover-shadow">
+                <img src="{{ movie.cover }}">
+            </div>
+            <div class="content">
+                <div class="header"> {{ movie.title }}</div>
+                <div class="meta">
+                    <a>剧情</a>
+                    <a>悬疑</a>
+                    <a>探险</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="four wide column">
+            <span style="font-size: 2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ movie.title }}</span>
+
+            {% for item in movie.info.split('\n') %}
+                <span class="tiny-title">{{ item }}</span>
+            {% endfor %}
+
+        </div>
+        <div class="four wide column">
+            <span style="font-size: 2em;font-weight: 700;color:#907e91;margin-bottom: .5em;display: block">剧情:</span>
+            <span>{{ movie.summary }}</span>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

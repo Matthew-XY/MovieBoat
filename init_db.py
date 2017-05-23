@@ -23,19 +23,22 @@ def gen_user(amount=50):
 
 def get_mongo_cursor():
     client = pymongo.MongoClient('localhost')
-    db = client['movie']
+    db = client['bt0_movie']
 
-    cursor = db.movie.find()
+    cursor = db.bt0_movie.find()
     return cursor
 
 
 def get_movie():
+    i = 100
     for item in get_mongo_cursor():
+        i += 1
         m = Movie(
             title=item['title'],
             cover=item['img'],
-            staffs=item['entry_text'],
-            description=item['description'],
+            info=item['info'],
+            summary=item['summary'],
+            brief_id=i,
         )
 
         db.session.add(m)

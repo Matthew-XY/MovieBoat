@@ -46,9 +46,10 @@ class User(UserMixin, db.Model):
 class Movie(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     title = db.Column(db.String(128), nullable=False, unique=True)
+    brief_id = db.Column(db.Integer, unique=True)
     cover = db.Column(db.String(1024), nullable=False)
-    staffs = db.Column(db.String(64), nullable=False)
-    description = db.Column(db.String(1024), nullable=True)
+    info = db.Column(db.String(128), nullable=False)
+    summary = db.Column(db.String(1024), nullable=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
