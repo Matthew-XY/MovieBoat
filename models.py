@@ -21,7 +21,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(512), nullable=False)
 
     balance = db.Column(db.Float, default=0.0)
-    avatar = db.Column(db.String(1024), nullable=True)
+    avatar = db.Column(db.String(1024))
     phone_number = db.Column(db.String(16), unique=True)
 
     def __init__(self, *args, **kwargs):
@@ -43,13 +43,34 @@ class User(UserMixin, db.Model):
         return '<User {}>'.format(self.username)
 
 
+class Comment(db.Model):
+    id = db.Column(db.String(32), primary_key=True)
+
+    user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
+    user = db.relationship('User', backref=db.backref('comments', lazy='dynamic'))
+
+    movie_id = db.Column(db.String(32), db.ForeignKey('movie.id', ondelete='cascade'))
+    movie = db.relationship('Movie', backref=db.backref('comments', lazy='dynamic'))
+
+    comment_time = db.Column(db.DateTime, nullable=False)
+    content = db.Column(db.Text)
+    point = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.id = uuid1().hex
+
+    def __repr__(self):
+        return '<Comment {}>'.format(self.id)
+
+
 class Movie(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     title = db.Column(db.String(128), nullable=False, unique=True)
     brief_id = db.Column(db.Integer, unique=True)
     cover = db.Column(db.String(1024), nullable=False)
     info = db.Column(db.String(128), nullable=False)
-    summary = db.Column(db.Text, nullable=True)
+    summary = db.Column(db.Text)
     video_uri = db.Column(db.String(1024), nullable=False)
 
     def __init__(self, *args, **kwargs):
@@ -58,6 +79,13 @@ class Movie(db.Model):
 
     def __repr__(self):
         return '<Movie {}>'.format(self.title)
+
+
+class MoviePrice(db.Model):
+    __tablename__ = 'movie_price'
+    movie_id = db.Column(db.String(32), db.ForeignKey('movie.id', ondelete='cascade'), primary_key=True)
+    movie = db.relationship('Movie', backref=db.backref('movie_price', lazy='dynamic'))
+    price = db.Column(db.Float, nullable=False)
 
 
 class CustomRecord(db.Model):
@@ -83,6 +111,10 @@ class CustomRecord(db.Model):
 
 class ChargeRecord(db.Model):
     id = db.Column(db.String(32), primary_key=True, doc='id主键')
+
+    user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='消费的消费者id')
+    user = db.relationship('User', backref=db.backref('charge_records', lazy='dynamic'))
+
     charge_time = db.Column(db.DateTime, nullable=False, doc='充值时间')
     money = db.Column(db.Float, nullable=False, default=0.0, doc='充值金额')
 

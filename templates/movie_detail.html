@@ -2,6 +2,12 @@
 
 {% block title %}{{ movie.title }}{% endblock %}
 
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('zh_CN') }}
+{% endblock %}
+
 {% block content %}
     <style>
         .tiny-title {
@@ -13,12 +19,10 @@
     </style>
 
 
-
     <div class="ui grid" style="margin-top: auto">
 
-        <div class="three wide column">
+        <div class="three wide column"></div>
 
-        </div>
         <div>
             <br><br><br><br>
             <div class="card">
@@ -32,9 +36,7 @@
             <button class="negative ui button large">点击购买</button>
         </div>
 
-        <div class="one wide column">
-
-        </div>
+        <div class="one wide column"></div>
 
         <div class="four wide column">
             <span style="font-size: 2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ movie.title }}</span>
@@ -49,14 +51,46 @@
             <span class="tiny-title">{{ movie.summary[0:512] }}...</span>
         </div>
 
+        <div class="five wide column"></div>
+
+        <div class="ui comments large five wide column">
+            <h3 class="ui dividing header">用户评论</h3>
+            {% for comment in comments %}
+                <div class="comment large">
+                    <a class="avatar">
+                        <img src="{{ comment.user.avatar }}">
+                    </a>
+                    <div class="content">
+                        <a class="author">{{ user.username }}</a>
+                        <div class="metadata">
+                            <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
+                            <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
+                        </div>
+                        <div class="text">{{ comment.content }}</div>
+                        <div class="actions">
+                            <a class="reply">回复</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <form class="ui reply form">
+                <div class="field">
+                    <textarea></textarea>
+                </div>
+                <div class="ui blue labeled submit icon button"><i class="icon edit"></i>添加评论</div>
+            </form>
+        </div>
     </div>
 
+
+
+
     <script>
-    $('#watch').click(
-        function () {
-            window.location='/watch/{{ movie.brief_id }}'
-        }
-    )
+        $('#watch').click(
+            function () {
+                window.location = '/watch/{{ movie.brief_id }}'
+            }
+        )
 
     </script>
 

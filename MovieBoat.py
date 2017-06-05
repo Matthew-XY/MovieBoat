@@ -4,16 +4,22 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
 from models import db
-from models import Movie, User
+from models import Movie, User, Comment
 from flask_app import app
 
-from init_db import gen_user, get_movie
+from flask_moment import Moment
+
+moment = Moment(app)
 
 
 # migrate = Migrate(app, db)
 # manager = Manager(app)
 # manager.add_command('db', MigrateCommand)
 # manager.run()
+
+
+
+
 
 
 
@@ -70,7 +76,10 @@ def movie_detail(movie_id):
     movie = Movie.query.filter_by(brief_id=movie_id).first()
     if not movie:
         abort(404)
-    return render_template('movie_detail.html', movie=movie, user=current_user)
+
+    comments = Comment.query.filter_by(movie=movie)
+
+    return render_template('movie_detail.html', movie=movie, user=current_user, comments=comments)
 
 
 @app.route('/watch/<movie_id>', methods=['GET'])
