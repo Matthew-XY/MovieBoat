@@ -31,7 +31,9 @@
         {% for movie in movies %}
             <div class="card">
                 <div class="image">
-                    <img src="{{ movie.cover }}">
+                    <a href="/movie/{{ movie.brief_id }}">
+                        <img src="{{ movie.cover }}">
+                    </a>
                 </div>
                 <div class="content">
                     <div class="header"> {{ movie.title }}</div>
@@ -40,7 +42,7 @@
                         <a>悬疑</a>
                         <a>探险</a>
                     </div>
-                    <div class="description">{{ movie.summary[20]}}</div>
+                    <div class="description">{{ movie.summary[20] }}</div>
                 </div>
                 <div class="extra content">
                     <span class="right floated">￥5.0</span>

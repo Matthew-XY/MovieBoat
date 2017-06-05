@@ -9,6 +9,7 @@ from flask_app import app
 
 from init_db import gen_user, get_movie
 
+
 # migrate = Migrate(app, db)
 # manager = Manager(app)
 # manager.add_command('db', MigrateCommand)
@@ -70,6 +71,14 @@ def movie_detail(movie_id):
     if not movie:
         abort(404)
     return render_template('movie_detail.html', movie=movie, user=current_user)
+
+
+@app.route('/watch/<movie_id>', methods=['GET'])
+def watch(movie_id):
+    movie = Movie.query.filter_by(brief_id=movie_id).first()
+    if not movie:
+        abort(404)
+    return render_template('watch.html', movie=movie, user=current_user)
 
 
 @app.route('/register', methods=['POST'])

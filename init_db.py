@@ -30,15 +30,16 @@ def get_mongo_cursor():
 
 
 def get_movie():
-    i = 100
+    i = 1000
     for item in get_mongo_cursor():
         i += 1
         m = Movie(
             title=item['title'],
             cover=item['img'],
             info=item['info'],
-            summary=item['summary'],
+            summary=item['summary'].lstrip(),
             brief_id=i,
+            video_uri='http://oh6k349gl.bkt.clouddn.com/sample-001.mp4'
         )
 
         db.session.add(m)

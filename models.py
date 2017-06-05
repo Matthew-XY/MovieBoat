@@ -49,7 +49,8 @@ class Movie(db.Model):
     brief_id = db.Column(db.Integer, unique=True)
     cover = db.Column(db.String(1024), nullable=False)
     info = db.Column(db.String(128), nullable=False)
-    summary = db.Column(db.String(1024), nullable=True)
+    summary = db.Column(db.Text, nullable=True)
+    video_uri = db.Column(db.String(1024), nullable=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

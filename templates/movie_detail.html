@@ -3,28 +3,12 @@
 {% block title %}{{ movie.title }}{% endblock %}
 
 {% block content %}
-
     <style>
         .tiny-title {
             color: #8e6560 !important;
             display: block;
-            margin-bottom: .5em;
-        }
-
-        .hover-shadow {
-            border-radius: 6px;
-            backface-visibility: hidden;
-            overflow: hidden;
-            border: 1px solid #ececec;
-            transition: 0.35s ease-out;
-            -webkit-transition: 0.35s ease-out;
-            -moz-transition: 0.35s ease-out;
-        }
-
-        .hover-shadow:hover {
-            transform: translate3d(0, -10px, 0);
-            -webkit-transform: translate3d(0, -10px, 0);
-            box-shadow: 0 23px 40px rgba(0, 0, 0, 0.2);
+            font-size: large;
+            margin-bottom: .9em;
         }
     </style>
 
@@ -35,36 +19,46 @@
         <div class="three wide column">
 
         </div>
-
-        <div class="three wide column">
-            <div class="hover-shadow">
-                <img src="{{ movie.cover }}">
-            </div>
-            <div class="content">
-                <div class="header"> {{ movie.title }}</div>
-                <div class="meta">
-                    <a>剧情</a>
-                    <a>悬疑</a>
-                    <a>探险</a>
+        <div>
+            <br><br><br><br>
+            <div class="card">
+                <div class="image">
+                    <a href="/movie/{{ movie.brief_id }}">
+                        <img src="{{ movie.cover }}">
+                    </a>
                 </div>
             </div>
+            <button id="watch" class="positive ui button large">观看视频</button>
+            <button class="negative ui button large">点击购买</button>
         </div>
 
+        <div class="one wide column">
+
+        </div>
 
         <div class="four wide column">
             <span style="font-size: 2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ movie.title }}</span>
 
-            {% for item in movie.info.split('\n') %}
+            {% for item in movie.info.split('\n')[0:-2] %}
                 <span class="tiny-title">{{ item }}</span>
             {% endfor %}
 
         </div>
-        <div class="four wide column">
+        <div class="three wide column">
             <span style="font-size: 2em;font-weight: 700;color:#907e91;margin-bottom: .5em;display: block">剧情:</span>
-            <span>{{ movie.summary }}</span>
+            <span class="tiny-title">{{ movie.summary[0:512] }}...</span>
         </div>
 
     </div>
+
+    <script>
+    $('#watch').click(
+        function () {
+            window.location='/watch/{{ movie.brief_id }}'
+        }
+    )
+
+    </script>
 
 
 
