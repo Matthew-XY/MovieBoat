@@ -9,9 +9,8 @@
         <link rel="stylesheet" type="text/css" href="../static/semantic/dist/semantic.min.css">
         <script src="../static/semantic/dist/semantic.min.js"></script>
     {% endblock %}
-
-
 </head>
+
 <body>
 
 <style type="text/css">
@@ -41,11 +40,7 @@
 
 <div class="ui  fixed large top inverted menu grey">
     <div class="ui container">
-        {#        <a href="/" class="header item">#}
-        {#            <img class="logo" src="../static/favicon.ico">#}
-        {#            电影船在线电影#}
-        {#        </a>#}
-        <a href="/" class="item">首页</a>
+        <a href="/" class="item">电影船</a>
         {% if user.is_authenticated %}
             <div class="ui simple dropdown item right">
                 <span><i class="user icon"></i></span>

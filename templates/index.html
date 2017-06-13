@@ -21,11 +21,9 @@
     </div>
 
     {% if keyword %}
-
-
         <div class="ui container">
             <div class="ui info message">
-{#                <i class="close icon"></i>#}
+                {#                <i class="close icon"></i>#}
                 <div class="header">
                     <p>以下是搜索关键词<span style="color:red">{{ keyword }}</span>得到的结果</p>
                     <p>共有<span style="color:red">{{ movies.__len__() }}</span>条记录</p>
@@ -35,10 +33,6 @@
     {% endif %}
 
     <br> <br> <br> <br> <br> <br> <br> <br>
-    {#            {% for movie in movies[0:11] %}#}
-    {#                        <a class="image" href="/movie/{{ movie.brief_id }}">#}
-    {#                            <img src="{{ movie.cover }}">#}
-    {#                        </a>#}
     {#                    <div class="content">#}
     {#                        <div class="header"> {{ movie.title }}</div>#}
     {#                        <div class="meta">#}
@@ -48,54 +42,40 @@
     {#                        </div>#}
     {#                        <div class="description">{{ movie.summary[20] }}</div>#}
     {#                    </div>#}
-    {#                    <div class="extra content">#}
-    {#                        <span class="right floated">￥5.0</span>#}
-    {#                        <span><i class="user icon"></i> 75 条评论</span>#}
-    {#                    </div>#}
+
+    <style>
+        .row {
+            margin-bottom: -70px;
+        }
+    </style>
+
 
 
 
     <div class="ui centered grid">
-        <div class="two column row">
-            {% for movie in movies[0:4] %}
-                <div class="column">
-                    <div class="ui card">
-                        <a class="image" href="/movie/{{ movie.brief_id }}" style="width: 270px;height: 399px;">
-                            <img src="{{ movie.cover }}">
-                        </a>
-                        <div class="content">
-                            <a class="header" href="#">{{ movie.title }}</a>
-                            <div class="meta">
-                                <a>Last Seen 2 days ago</a>
+        {% for i in range(2) %}
+            <div class="two column row">
+                {% for movie in movies[i*4:i*4+4] %}
+                    <div class="column">
+                        <div class="ui card">
+                            <a class="image" href="/movie/{{ movie.brief_id }}" style="width: 270px;height: 399px;">
+                                <img src="{{ movie.cover }}">
+                            </a>
+                            <div class="content">
+                                <a class="header" href="/movie/{{ movie.brief_id }}"><h3>{{ movie.title }}</h3></a>
+                            </div>
+                            <div class="extra content">
+                                ￥
+                                <span style="color: red;">
+                                        {{ movie.movie_price.first().price }}
+                                </span>
                             </div>
                         </div>
+                        <button id="custom_{{ movie.brief_id }}" class="ui button negative large">点击购买</button>
                     </div>
-                    <button class="negative ui button large">点击购买</button>
-
-
-                </div>
-            {% endfor %}
-        </div>
-
-
-        <div class="two column row">
-            {% for movie in movies[4:8] %}
-                <div class="column">
-                    <div class="ui card">
-                        <a class="image" href="#" style="width: 270px;height: 399px;">
-                            <img src="{{ movie.cover }}">
-                        </a>
-                        <div class="content">
-                            <a class="header" href="#">{{ movie.title }}</a>
-                            <div class="meta">
-                                <a>Last Seen 2 days ago</a>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="negative ui button large">点击购买</button>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
     </div>
 
 
@@ -118,10 +98,69 @@
 
     </div>
 
+    <div id="custom_modal" class="ui modal">
+        <i class="close icon"></i>
+        <div class="header">
+            确认购买
+        </div>
+        <div class="content">
+            <img id="custom_img" src="">
+            <h3 id="movie_title"></h3>
+        </div>
+        <div class="actions">
+            <div id="confirm_custom" class="ui negative button">确认购买</div>
+            <div class="ui button">取消</div>
+        </div>
+        <div class="ui error message">
+            <ul class="list">
+                <li>ERR</li>
+            </ul>
+        </div>
+    </div>
+    </div>
+
     <script>
-        $('.special.cards .image').dimmer({
-            on: 'hover'
-        });
+        var movie_brief_id = $(this).attr("id");
+        $('.button.negative.large').click(
+            function () {
+                movie_brief_id = $(this).attr("id");
+
+                var item_src = $(this).parent()[0].getElementsByTagName('img')[0].src
+                var item_title = $(this).parent()[0].getElementsByTagName('h3')[0].text
+
+                alert(item_title)
+
+                $('#movie_title').text(item_title)
+                $('#custom_img').attr('src', item_src);
+                $('#custom_modal').modal('show');
+            }
+        )
+
+        $('#confirm_custom').click(
+            function () {
+
+                function deal_response(response) {
+                    switch (response['code']) {
+                        case 302:
+                            $('li').text(
+                                response['message']
+                            )
+                            $('.error.message').show()
+                            break
+                    }
+                }
+
+                $.ajax({
+                        type: 'POST',
+                        url: '/custom',
+                        data: {movie_brief_id: movie_brief_id},
+                        success: deal_response,
+                    }
+                )
+            }
+        )
+
+
     </script>
 
 

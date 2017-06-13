@@ -1,20 +1,24 @@
+import datetime
+
 from flask import render_template, request, redirect, url_for, flash, session, jsonify, abort
 from flask_login import current_user, login_user, logout_user, LoginManager, login_required
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+from flask_moment import Moment
 
 from models import db
-from models import Movie, User
+from models import Movie, User, CustomRecord, ChargeRecord, Comment
 from flask_app import app
 
 from init_db import gen_user, get_movie
-
 
 # migrate = Migrate(app, db)
 # manager = Manager(app)
 # manager.add_command('db', MigrateCommand)
 # manager.run()
 
+
+moment = Moment(app)
 
 
 def init_login():
@@ -81,6 +85,49 @@ def watch(movie_id):
     return render_template('watch.html', movie=movie, user=current_user)
 
 
+@app.route('/custom', methods=['POST'])
+def custom():
+    print(request.form)
+    movie_brief_id = request.form.get('movie_brief_id')
+    movie_brief_id = movie_brief_id.split('_')[-1]
+    movie = Movie.query.filter_by(brief_id=movie_brief_id).first()
+    print(movie)
+
+    ret = {}
+
+    if not current_user:
+        ret['code'] = 301
+        ret['message'] = '请先登录'
+        return jsonify(ret)
+
+    money = movie.movie_price.first().price
+
+
+    u = User.query.filter_by(id=current_user.get_id()).first()
+
+    if u.balance >= money:
+        u.balance -= money
+
+        cr = CustomRecord(
+            customer=current_user,
+            movie=movie,
+            custom_time=datetime.datetime.utcnow(),
+            money=money,
+        )
+
+        db.session.add(u)
+        db.session.add(cr)
+        db.commit()
+        ret['code'] = 300
+        ret['message'] = '购买成功!'
+
+    else:
+        ret['code'] = 302
+        ret['message'] = '余额不足，请先充值!'
+
+    return jsonify(ret)
+
+
 @app.route('/register', methods=['POST'])
 def register():
     print(request.form)
@@ -117,6 +164,18 @@ def register():
     ret['message'] = '注册成功'
 
     return jsonify(ret)
+
+
+@login_required
+@app.route('/user/custom_records', methods=['GET'])
+def custom_records():
+    return render_template('custom_records.html', user=current_user)
+
+
+@login_required
+@app.route('/user/profile', methods=['GET'])
+def profile():
+    return render_template('profile.html', user=current_user)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }}--电影船{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('zh_CN') }}
+{% endblock %}
+
+{% block content %}
+
+
+
+    <!--the main content begin-->
+    <div class="container">
+        <!--the content-->
+        <div class="ui grid">
+            <!--the vertical menu-->
+            <div class="four wide column">
+                <div class="verticalMenu">
+                    <div class="ui vertical pointing menu fluid">
+                        <a class="item" href="./user_profile.html">
+                            <i class="edit icon"></i>修改密码
+                        </a>
+                        <a class="active teal item" href="./apikey_manage.html">
+                            <i class="key icon"></i>充值记录
+                        </a>
+                        <a class="item" href="./change_password.html">
+                            <i class="lock icon"></i> 消费记录
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="twelve wide column">
+                <div class="pageHeader">
+
+
+                    <h1>
+                        {{ user.username }}
+                    </h1>
+
+                    <h1>
+        <span style="color: red;">
+        ¥{{ user.balance }}
+        </span>
+                    </h1>
+
+                    <img src="{{ user.avatar }}">
+                    <h1>{{ user.phone_number }}</h1>
+                    <div class="segment">
+                    </div>
+                </div>
+                <!--the api confirm modal-->
+
+            </div>
+
+
+
+
+
+{% endblock %}
