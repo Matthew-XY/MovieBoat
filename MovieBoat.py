@@ -4,22 +4,16 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
 from models import db
-from models import Movie, User, Comment, ChargeRecord, CustomRecord
+from models import Movie, User
 from flask_app import app
 
-from flask_moment import Moment
-
-moment = Moment(app)
+from init_db import gen_user, get_movie
 
 
 # migrate = Migrate(app, db)
 # manager = Manager(app)
 # manager.add_command('db', MigrateCommand)
 # manager.run()
-
-
-
-
 
 
 
@@ -35,30 +29,15 @@ def init_login():
 @app.route('/')
 def index():
     movies = Movie.query.all()
-
     return render_template('index.html', movies=movies, user=current_user)
 
 
-@login_required
 @app.route('/logout')
+@login_required
 def logout():
     user = User.query.get(session.get('user_id'))
     logout_user()
     return redirect(url_for('.index'))
-
-
-@login_required
-@app.route('/charge')
-def charge():
-    return render_template('charge.html')
-
-
-@login_required
-@app.route('/user/history')
-def history():
-    custom_records = CustomRecord.query.filter_by(customer=current_user).all()
-
-    return render_template('history.html', user=current_user, custom_records=custom_records)
 
 
 @app.route('/login', methods=['POST'])
@@ -91,10 +70,7 @@ def movie_detail(movie_id):
     movie = Movie.query.filter_by(brief_id=movie_id).first()
     if not movie:
         abort(404)
-
-    comments = Comment.query.filter_by(movie=movie)
-
-    return render_template('movie_detail.html', movie=movie, user=current_user, comments=comments)
+    return render_template('movie_detail.html', movie=movie, user=current_user)
 
 
 @app.route('/watch/<movie_id>', methods=['GET'])
@@ -103,21 +79,6 @@ def watch(movie_id):
     if not movie:
         abort(404)
     return render_template('watch.html', movie=movie, user=current_user)
-
-
-@login_required
-@app.route('/profile/', methods=['GET'])
-def profile():
-    return render_template('profile.html', user=current_user)
-
-
-@app.route('/search', methods=['GET'])
-def search():
-    keyword = request.args.get('keyword')
-
-    movies = Movie.query.filter(Movie.title.like('%' + keyword + '%')).all()
-
-    return render_template('index.html', user=current_user, movies=movies, keyword=keyword)
 
 
 @app.route('/register', methods=['POST'])
