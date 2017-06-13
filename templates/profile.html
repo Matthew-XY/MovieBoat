@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }}--电影船{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('zh_CN') }}
+{% endblock %}
+
+{% block content %}
+
+    <h1>COming</h1>
+
+
+{% endblock %}

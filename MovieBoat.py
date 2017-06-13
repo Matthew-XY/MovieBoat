@@ -35,6 +35,7 @@ def init_login():
 @app.route('/')
 def index():
     movies = Movie.query.all()
+
     return render_template('index.html', movies=movies, user=current_user)
 
 
@@ -88,6 +89,21 @@ def watch(movie_id):
     if not movie:
         abort(404)
     return render_template('watch.html', movie=movie, user=current_user)
+
+
+@login_required
+@app.route('/profile/', methods=['GET'])
+def profile():
+    return render_template('profile.html', user=current_user)
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    keyword = request.args.get('keyword')
+
+    movies = Movie.query.filter(Movie.title.like('%' + keyword + '%')).all()
+
+    return render_template('index.html', user=current_user, movies=movies)
 
 
 @app.route('/register', methods=['POST'])

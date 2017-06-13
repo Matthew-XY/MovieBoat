@@ -38,19 +38,20 @@
 
 </style>
 
-<div class="ui fixed inverted menu grey">
+
+<div class="ui  fixed large top inverted menu grey">
     <div class="ui container">
-        <a href="/" class="header item">
-            <img class="logo" src="../static/favicon.ico">
-            电影船在线电影
-        </a>
+        {#        <a href="/" class="header item">#}
+        {#            <img class="logo" src="../static/favicon.ico">#}
+        {#            电影船在线电影#}
+        {#        </a>#}
         <a href="/" class="item">首页</a>
         {% if user.is_authenticated %}
             <div class="ui simple dropdown item right">
                 <span><i class="user icon"></i></span>
                 {{ user.username }} <i class="dropdown icon"></i>
                 <div class="menu">
-                    <a class="item" href="#">个人信息</a>
+                    <a class="item" href="/profile">个人信息</a>
                     <a class="item" href="#">历史记录</a>
                     <div class="divider"></div>
                     <div class="header">充值</div>
@@ -68,13 +69,16 @@
 
         {% else %}
             <div class="item right">
-                <div id="login" class="ui primary button">
-                    <span><i class="user icon"></i></span>
-                    登陆
-                </div>
-                <div id="register" class="ui button">
-                    <span><i class="pencil icon"></i></span>
-                    注册
+                <div class="ui buttons">
+                    <button class="ui primary button" id="login">
+                        <span><i class="user icon"></i></span>
+                        注册
+                    </button>
+                    <div class="or" data-text="或"></div>
+                    <button class="ui button" id="register">
+                        <span><i class="pencil icon"></i></span>
+                        登录
+                    </button>
                 </div>
             </div>
         {% endif %}
