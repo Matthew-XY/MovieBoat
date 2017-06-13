@@ -4,7 +4,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
 from models import db
-from models import Movie, User, Comment
+from models import Movie, User, Comment, ChargeRecord, CustomRecord
 from flask_app import app
 
 from flask_moment import Moment
@@ -39,12 +39,26 @@ def index():
     return render_template('index.html', movies=movies, user=current_user)
 
 
-@app.route('/logout')
 @login_required
+@app.route('/logout')
 def logout():
     user = User.query.get(session.get('user_id'))
     logout_user()
     return redirect(url_for('.index'))
+
+
+@login_required
+@app.route('/charge')
+def charge():
+    return render_template('charge.html')
+
+
+@login_required
+@app.route('/user/history')
+def history():
+    custom_records = CustomRecord.query.filter_by(customer=current_user).all()
+
+    return render_template('history.html', user=current_user, custom_records=custom_records)
 
 
 @app.route('/login', methods=['POST'])
@@ -103,7 +117,7 @@ def search():
 
     movies = Movie.query.filter(Movie.title.like('%' + keyword + '%')).all()
 
-    return render_template('index.html', user=current_user, movies=movies)
+    return render_template('index.html', user=current_user, movies=movies, keyword=keyword)
 
 
 @app.route('/register', methods=['POST'])

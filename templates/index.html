@@ -20,6 +20,20 @@
         </div>
     </div>
 
+    {% if keyword %}
+
+
+        <div class="ui container">
+            <div class="ui info message">
+{#                <i class="close icon"></i>#}
+                <div class="header">
+                    <p>以下是搜索关键词<span style="color:red">{{ keyword }}</span>得到的结果</p>
+                    <p>共有<span style="color:red">{{ movies.__len__() }}</span>条记录</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <br> <br> <br> <br> <br> <br> <br> <br>
     {#            {% for movie in movies[0:11] %}#}
     {#                        <a class="image" href="/movie/{{ movie.brief_id }}">#}
