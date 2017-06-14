@@ -34,30 +34,15 @@
     {% endif %}
 
     <br> <br> <br> <br> <br> <br> <br> <br>
-    {#                    <div class="content">#}
-    {#                        <div class="header"> {{ movie.title }}</div>#}
-    {#                        <div class="meta">#}
-    {#                            {% for item in movie.info.split('\n')[0:-2] %}#}
-    {#                                <a>{{ item }}</a>#}
-    {#                            {% endfor %}#}
-    {#                        </div>#}
-    {#                        <div class="description">{{ movie.summary[20] }}</div>#}
-    {#                    </div>#}
-
-    <style>
-        .row {
-            margin-bottom: -70px;
-        }
-    </style>
-
 
 
 
     <div class="ui centered grid">
         {% for i in range(2) %}
-            <div class="two column row">
+                <div class="four wide column">
+                </div>
                 {% for movie in movies[i*4:i*4+4] %}
-                    <div class="column">
+                    <div class="two wide column">
                         <div class="ui card">
                             <a class="image" href="/movie/{{ movie.brief_id }}" style="width: 270px;height: 399px;">
                                 <img src="{{ movie.cover }}">
@@ -75,7 +60,6 @@
                         <button id="consume_{{ movie.brief_id }}" class="ui button negative large">点击购买</button>
                     </div>
                 {% endfor %}
-            </div>
         {% endfor %}
     </div>
 
