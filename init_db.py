@@ -9,7 +9,7 @@ import math
 from faker import Factory
 import pymongo
 
-from models import User, Movie, Comment, ChargeRecord, CustomRecord, MoviePrice
+from models import User, Movie, Comment, ChargeRecord, ConsumeRecord, MoviePrice
 from models import db
 
 fake = Factory.create('zh_CN')
@@ -96,17 +96,17 @@ def gen_charge_record(amount=100):
         db.session.commit()
 
 
-def gen_custom_record(amount=100):
+def gen_consume_record(amount=100):
     for i in range(amount):
         u = random.choice(User.query.all())
         m = random.choice(Movie.query.all())
         money = MoviePrice.query.get(m.id).price
 
         if u.balance > money:
-            cr = CustomRecord(
-                customer=u,
+            cr = ConsumeRecord(
+                consumer=u,
                 movie=m,
-                custom_time=datetime.datetime.now() + datetime.timedelta(fake.random_digit()),
+                consume_time=datetime.datetime.now() + datetime.timedelta(fake.random_digit()),
                 money=money,
             )
             u.balance -= money
@@ -130,5 +130,5 @@ if __name__ == '__main__':
         gen_comment()
     elif args.name == 'charge':
         gen_charge_record()
-    elif args.name == 'custom':
-        gen_custom_record()
+    elif args.name == 'consume':
+        gen_consume_record()

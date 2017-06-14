@@ -13,25 +13,43 @@
 
 
     <!--the main content begin-->
-    <div class="container">
+    <div class="container centered aligned">
         <!--the content-->
         <div class="ui grid">
             <!--the vertical menu-->
             <div class="four wide column">
                 <div class="verticalMenu">
                     <div class="ui vertical pointing menu fluid">
-                        <a class="item" href="./user_profile.html">
+                        <a class="item" href="">
                             <i class="edit icon"></i>修改密码
                         </a>
-                        <a class="active teal item" href="./apikey_manage.html">
+                        <a class="active teal item" href="/user/consume_records">
                             <i class="key icon"></i>充值记录
                         </a>
-                        <a class="item" href="./change_password.html">
+                        <a class="item" href="/user/charge_records">
                             <i class="lock icon"></i> 消费记录
                         </a>
                     </div>
                 </div>
             </div>
+
+            <div class="ui vertical pointing menu">
+                <a class="active item">
+                    Home
+                </a>
+                <a class="item">
+                    Messages
+                </a>
+                <a class="item">
+                    Friends
+                </a>
+            </div>
+
+            <div class="container">
+                <img class="ui medium circular image" src="{{ user.avatar }}">
+            </div>
+
+
             <div class="twelve wide column">
                 <div class="pageHeader">
 
@@ -40,13 +58,12 @@
                         {{ user.username }}
                     </h1>
 
+
                     <h1>
         <span style="color: red;">
         ¥{{ user.balance }}
         </span>
                     </h1>
-
-                    <img src="{{ user.avatar }}">
                     <h1>{{ user.phone_number }}</h1>
                     <div class="segment">
                     </div>
@@ -54,9 +71,5 @@
                 <!--the api confirm modal-->
 
             </div>
-
-
-
-
 
 {% endblock %}

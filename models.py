@@ -46,8 +46,11 @@ class User(UserMixin, db.Model):
 class Comment(db.Model):
     id = db.Column(db.String(32), primary_key=True)
 
-    user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
-    user = db.relationship('User', backref=db.backref('comments', lazy='dynamic'))
+    from_user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
+    from_user = db.relationship('User', backref=db.backref('comments_from_user', lazy='dynamic'), foreign_keys=[from_user_id])
+
+    to_user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), nullable=True, doc='用户ID')
+    to_user = db.relationship('User', backref=db.backref('comments_to_user', lazy='dynamic'), foreign_keys=[to_user_id])
 
     movie_id = db.Column(db.String(32), db.ForeignKey('movie.id', ondelete='cascade'))
     movie = db.relationship('Movie', backref=db.backref('comments', lazy='dynamic'))
@@ -88,25 +91,25 @@ class MoviePrice(db.Model):
     price = db.Column(db.Float, nullable=False)
 
 
-class CustomRecord(db.Model):
+class ConsumeRecord(db.Model):
     id = db.Column(db.String(32), primary_key=True)
-    custom_time = db.Column(db.DateTime, nullable=False, doc='消费时间')
+    consume_time = db.Column(db.DateTime, nullable=False, doc='消费时间')
 
-    customer_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='消费的消费者id')
-    customer = db.relationship('User', backref=db.backref('custom_records', lazy='dynamic'))
+    consumer_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='消费的消费者id')
+    consumer = db.relationship('User', backref=db.backref('consume_records', lazy='dynamic'))
 
     movie_id = db.Column(db.String(32), db.ForeignKey('movie.id', ondelete='cascade'))
-    movie = db.relationship('Movie', backref=db.backref('custom_records', lazy='dynamic'))
+    movie = db.relationship('Movie', backref=db.backref('consume_records', lazy='dynamic'))
 
     money = db.Column(db.Float, nullable=False, default=0.0, doc='消费金额')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.id = uuid1().hex
-        self.custom_time = datetime.now()
+        self.consume_time = datetime.now()
 
     def __repr__(self):
-        return '<CustomRecord {}>'.format(self.id)
+        return '<ConsumeRecord {}>'.format(self.id)
 
 
 class ChargeRecord(db.Model):

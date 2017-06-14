@@ -2,8 +2,8 @@
 
 {% block title %}电影船{% endblock %}
 
-{% block content %}
 
+{% block content %}
 
     <div class="ui container center aligned">
         <a class="header item center aligned" href="/">
@@ -71,7 +71,7 @@
                                 </span>
                             </div>
                         </div>
-                        <button id="custom_{{ movie.brief_id }}" class="ui button negative large">点击购买</button>
+                        <button id="consume_{{ movie.brief_id }}" class="ui button negative large">点击购买</button>
                     </div>
                 {% endfor %}
             </div>
@@ -98,49 +98,78 @@
 
     </div>
 
-    <div id="custom_modal" class="ui modal">
+    <div id="consume_modal" class="ui modal" style="width: 700px">
         <i class="close icon"></i>
         <div class="header">
             确认购买
         </div>
-        <div class="content">
-            <img id="custom_img" src="">
-            <h3 id="movie_title"></h3>
+        <div class="content" style="margin-bottom: 50px">
+            <div class="container">
+                <div class="ui grid">
+                    <div class="two column row">
+                        <div class="column">
+                            <img id="consume_img" src="" style="height: 279px">
+                        </div>
+                        <div class="column">
+                            <h1 id="movie_title"></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="actions">
-            <div id="confirm_custom" class="ui negative button">确认购买</div>
-            <div class="ui button">取消</div>
+
+        <div class="ui horizontal divider">
+            ~~~~
         </div>
-        <div class="ui error message">
+
+        <div class="ui container right aligned">
+            <div id="confirm_consume" class="ui negative right button" onsubmit="return false;">确认购买</div>
+            <div id="cancel_consume" class="ui button">取消</div>
+        </div>
+
+
+        <div class="ui error message" hidden>
             <ul class="list">
-                <li>ERR</li>
+                <li></li>
             </ul>
         </div>
     </div>
-    </div>
+
+
+
 
     <script>
         var movie_brief_id = $(this).attr("id");
         $('.button.negative.large').click(
             function () {
+                $('.error.message').hide()
                 movie_brief_id = $(this).attr("id");
 
                 var item_src = $(this).parent()[0].getElementsByTagName('img')[0].src
-                var item_title = $(this).parent()[0].getElementsByTagName('h3')[0].text
+                var item_title = $(this).parent()[0].getElementsByClassName('header')[0].text
 
-                alert(item_title)
 
                 $('#movie_title').text(item_title)
-                $('#custom_img').attr('src', item_src);
-                $('#custom_modal').modal('show');
+                $('#consume_img').attr('src', item_src);
+                $('#consume_modal').modal('show');
             }
         )
 
-        $('#confirm_custom').click(
+        $('#confirm_consume').click(
             function () {
 
                 function deal_response(response) {
                     switch (response['code']) {
+                        case 300:
+                            $('#consume_modal').modal('hide')
+
+                        case 301:
+                            $('li').text(
+                                response['message']
+                            )
+                            $('.error.message').show()
+                            break
                         case 302:
                             $('li').text(
                                 response['message']
@@ -152,7 +181,7 @@
 
                 $.ajax({
                         type: 'POST',
-                        url: '/custom',
+                        url: '/consume',
                         data: {movie_brief_id: movie_brief_id},
                         success: deal_response,
                     }
@@ -160,8 +189,11 @@
             }
         )
 
-
+        $('#cancel_consume').click(
+            function () {
+                $('#consume_modal').modal('hide')
+            }
+        )
     </script>
-
-
+   
 {% endblock %}

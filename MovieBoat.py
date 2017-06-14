@@ -7,7 +7,7 @@ from flask_script import Manager
 from flask_moment import Moment
 
 from models import db
-from models import Movie, User, CustomRecord, ChargeRecord, Comment
+from models import Movie, User, ConsumeRecord, ChargeRecord, Comment
 from flask_app import app
 
 from init_db import gen_user, get_movie
@@ -34,6 +34,15 @@ def init_login():
 def index():
     movies = Movie.query.all()
     return render_template('index.html', movies=movies, user=current_user)
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    keyword = request.args.get('keyword')
+
+    movies = Movie.query.filter(Movie.title.like('%' + keyword + '%')).all()
+
+    return render_template('index.html', user=current_user, movies=movies, keyword=keyword)
 
 
 @app.route('/logout')
@@ -85,8 +94,8 @@ def watch(movie_id):
     return render_template('watch.html', movie=movie, user=current_user)
 
 
-@app.route('/custom', methods=['POST'])
-def custom():
+@app.route('/consume', methods=['POST'])
+def consume():
     print(request.form)
     movie_brief_id = request.form.get('movie_brief_id')
     movie_brief_id = movie_brief_id.split('_')[-1]
@@ -95,29 +104,28 @@ def custom():
 
     ret = {}
 
-    if not current_user:
+    if not current_user.is_active:
         ret['code'] = 301
         ret['message'] = '请先登录'
         return jsonify(ret)
 
     money = movie.movie_price.first().price
 
-
     u = User.query.filter_by(id=current_user.get_id()).first()
 
     if u.balance >= money:
         u.balance -= money
 
-        cr = CustomRecord(
-            customer=current_user,
+        cr = ConsumeRecord(
+            consumer=current_user,
             movie=movie,
-            custom_time=datetime.datetime.utcnow(),
+            consume_time=datetime.datetime.utcnow(),
             money=money,
         )
 
         db.session.add(u)
         db.session.add(cr)
-        db.commit()
+        db.session.commit()
         ret['code'] = 300
         ret['message'] = '购买成功!'
 
@@ -126,6 +134,12 @@ def custom():
         ret['message'] = '余额不足，请先充值!'
 
     return jsonify(ret)
+
+
+@login_required
+@app.route('/user/charge', methods=['GET'])
+def charge():
+    return render_template()
 
 
 @app.route('/register', methods=['POST'])
@@ -167,9 +181,9 @@ def register():
 
 
 @login_required
-@app.route('/user/custom_records', methods=['GET'])
+@app.route('/user/consume_records', methods=['GET'])
 def custom_records():
-    return render_template('custom_records.html', user=current_user)
+    return render_template('consume_records.html', user=current_user)
 
 
 @login_required
