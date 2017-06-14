@@ -5,6 +5,7 @@ from flask_login import current_user, login_user, logout_user, LoginManager, log
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_moment import Moment
+from math import ceil
 
 from models import db
 from models import Movie, User, ConsumeRecord, ChargeRecord, Comment
@@ -30,19 +31,73 @@ def init_login():
         return db.session.query(User).get(user_id)
 
 
-@app.route('/')
-def index():
-    movies = Movie.query.all()
-    return render_template('index.html', movies=movies, user=current_user)
-
-
+@app.route('/', methods=['GET'])
 @app.route('/search', methods=['GET'])
-def search():
-    keyword = request.args.get('keyword')
+# @app.route('/search', methods=['GET'])
+def index():
+    keyword = request.args.get('keyword', None)
+    page = int(request.args.get('page', 1))
 
-    movies = Movie.query.filter(Movie.title.like('%' + keyword + '%')).all()
+    PER_PAGE = 8
 
-    return render_template('index.html', user=current_user, movies=movies, keyword=keyword)
+    if not keyword:
+        movies = Movie.query.all()
+    else:
+        movies = Movie.query.filter(Movie.title.like('%' + keyword + '%')).all()
+
+    pagination = Pagination(page, PER_PAGE, len(movies))
+
+    tmp = (page - 1) * PER_PAGE
+    movies = movies[tmp:tmp + 8]
+
+    current_path = request.url.split('page')[0]
+
+    if current_path.endswith('/'):
+        current_path += '?'
+
+    print(page)
+
+    return render_template(
+        'index.html',
+        user=current_user,
+        movies=movies,
+        keyword=keyword,
+        current_path=current_path,
+        current_page=page,
+        pagination=pagination
+    )
+
+
+class Pagination(object):
+    def __init__(self, page, per_page, total_count):
+        self.page = page
+        self.per_page = per_page
+        self.total_count = total_count
+
+    @property
+    def pages(self):
+        return int(ceil(self.total_count / float(self.per_page)))
+
+    @property
+    def has_prev(self):
+        return self.page > 1
+
+    @property
+    def has_next(self):
+        return self.page < self.pages
+
+    def iter_pages(self, left_edge=2, left_current=2,
+                   right_current=5, right_edge=2):
+        last = 0
+        for num in range(1, self.pages + 1):
+            if num <= left_edge or \
+                    (num > self.page - left_current - 1 and \
+                                 num < self.page + right_current) or \
+                            num > self.pages - right_edge:
+                if last + 1 != num:
+                    yield None
+                yield num
+                last = num
 
 
 @app.route('/logout')

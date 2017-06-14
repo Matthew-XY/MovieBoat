@@ -14,6 +14,7 @@
                 <h1 class="ui header">电影船是一个在线付费视频的网站</h1>
                 <div class="ui field fluid huge action input">
                     <input type="text" name="keyword" placeholder="请输入电影、电视剧、纪录片名">
+                    <input type="text" name="page" value="1" hidden>
                     <button type="submit" value="search" class="ui huge secondary submit button">搜索</button>
                 </div>
             </form>
@@ -79,23 +80,37 @@
     </div>
 
 
-    <div class="ui container">
-        <div class="ui pagination menu right floated">
-            <a class="icon item">
-                <i class="icon left arrow"></i>
-            </a>
 
-            {% for x in range(7) %}
-                <a class="item">
-                    {{ x }}
+    <div class="ui container" style="margin-bottom: 100px">
+        <div class="ui pagination big menu right floated">
+
+            {% if pagination.has_prev %}
+                <a class="icon item" href="{{ current_path }}page={{ current_page-1 }}">
+                    <i class="icon left arrow"></i>
                 </a>
+            {% endif %}
+
+            {% for page in pagination.iter_pages() %}
+
+                {% if not page %}
+                    <a class="item">
+                        ...
+                    </a>
+                {% else %}
+                    <a class="item" href="{{ current_path }}page={{ page }}">
+                        {{ page }}
+                    </a>
+                {% endif %}
+
             {% endfor %}
 
-            <a class="icon item">
-                <i class="icon right arrow"></i>
-            </a>
-        </div>
 
+            {% if pagination.has_next %}
+                <a class="icon item" href="{{ current_path }}page={{ current_page+1 }}">
+                    <i class="icon right arrow"></i>
+                </a>
+            {% endif %}
+        </div>
     </div>
 
     <div id="consume_modal" class="ui modal" style="width: 700px">
@@ -135,8 +150,6 @@
             </ul>
         </div>
     </div>
-
-
 
 
     <script>
@@ -195,5 +208,5 @@
             }
         )
     </script>
-   
+
 {% endblock %}
