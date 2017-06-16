@@ -11,75 +11,85 @@
 {% block content %}
     <style>
         .tiny-title {
-            color: #8e6560 !important;
+            color: purple !important;
             display: block;
             font-size: large;
             margin-bottom: .9em;
         }
     </style>
+    <div class="ui container center aligned" style="margin-bottom: 200px;">
+    </div>
 
 
-    <div class="ui grid" style="margin-top: auto">
+    <div class="ui grid">
 
-        <div class="three wide column"></div>
+        <div class="row">
 
-        <div>
-            <br><br><br><br>
-            <div class="card">
+            <div class="three wide column"> </div>
+
+            <div class="three wide column">
                 <div class="image">
                     <a href="/movie/{{ movie.brief_id }}">
                         <img src="{{ movie.cover }}">
                     </a>
                 </div>
+                <button id="watch" class="ui large positive  button">观看视频</button>
+                <button class="ui large negative button">点击购买</button>
             </div>
-            <button id="watch" class="positive ui button large">观看视频</button>
-            <button class="negative ui button large">点击购买</button>
+            <div class="three wide column"> </div>
+
+            <div class="six wide column" style="background-color: #44ffff">
+                <span style="font-size: xx-large;font-weight: 700;color:red;display: block;margin-bottom: .5em">{{ movie.title }}</span>
+
+                {% for item in movie.info.split('\n')[0:-2] %}
+                    <p class="tiny-title">{{ item }}</p>
+                {% endfor %}
+
+            </div>
         </div>
 
-        <div class="one wide column"></div>
 
-        <div class="four wide column">
-            <span style="font-size: 2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ movie.title }}</span>
-
-            {% for item in movie.info.split('\n')[0:-2] %}
-                <span class="tiny-title">{{ item }}</span>
-            {% endfor %}
+        <div class="ui container">
+            <div class="eight wide column" style="background-color: yellow">
+                <span style="font-size: 1.9em;font-weight: 700;color:#44ffff;margin-bottom: .5em;display: block">剧情:</span>
+                <p style="font-size: 1.2em">{{ movie.summary[0:512] }}...</p>
+            </div>
 
         </div>
-        <div class="three wide column">
-            <span style="font-size: 2em;font-weight: 700;color:#907e91;margin-bottom: .5em;display: block">剧情:</span>
-            <span class="tiny-title">{{ movie.summary[0:512] }}...</span>
-        </div>
 
-        <div class="five wide column"></div>
 
-        <div class="ui comments large five wide column">
-            <h3 class="ui dividing header">用户评论</h3>
-            {% for comment in comments %}
-                <div class="comment large">
-                    <a class="avatar">
-                        <img src="{{ comment.user.avatar }}">
-                    </a>
-                    <div class="content">
-                        <a class="author">{{ user.username }}</a>
-                        <div class="metadata">
-                            <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
-                            <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
+
+        <div class="ui container">
+            <div class="ui comments">
+                <h3 class="ui dividing header">用户评论</h3>
+                {% for comment in comments %}
+                    <div class="comment">
+                        <div class="avatar">
+                            <img class="ui medium circular image" src="{{ comment.from_user.avatar }}">
                         </div>
-                        <div class="text">{{ comment.content }}</div>
-                        <div class="actions">
-                            <a class="reply">回复</a>
+                        <div class="content">
+                            <a class="author">{{ comment.from_user.username }}</a>
+                            <div class="metadata">
+                                <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
+                                <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
+                            </div>
+                            <div class="text" style="font-size: 1.2em">{{ comment.content }}</div>
+                            <div class="actions">
+                                <a class="reply">回复</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-            <form class="ui reply form">
-                <div class="field">
-                    <textarea></textarea>
-                </div>
-                <div class="ui blue labeled submit icon button"><i class="icon edit"></i>添加评论</div>
-            </form>
+                {% endfor %}
+                <form class="ui reply form">
+                    <div class="field">
+                        <textarea></textarea>
+                    </div>
+                    <div id="comment" class="ui blue labeled submit icon button"><i class="icon edit"></i>添加评论</div>
+                </form>
+            </div>
+
         </div>
+
     </div>
 
 
@@ -89,6 +99,12 @@
         $('#watch').click(
             function () {
                 window.location = '/watch/{{ movie.brief_id }}'
+            }
+        )
+
+        $('#comment').click(
+            function () {
+                alert('请登录')
             }
         )
 

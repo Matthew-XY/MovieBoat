@@ -52,6 +52,6 @@ def get_movie_detail(uri):
 
 if __name__ == '__main__':
 
-    for i in range(0, 5):
-        url = 'http://bt0.com/film-download/1-0-0-0-3-{}.html'.format(i)
+    for i in range(0, 20):
+        url = 'http://bt0.com/film-download/1-0-0-0-0-{}.html'.format(i)
         collect_movies(url)

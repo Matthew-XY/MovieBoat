@@ -11,6 +11,8 @@ from models import db
 from models import Movie, User, ConsumeRecord, ChargeRecord, Comment
 from flask_app import app
 
+from admin import admin
+
 from init_db import gen_user, get_movie
 
 # migrate = Migrate(app, db)
@@ -33,7 +35,6 @@ def init_login():
 
 @app.route('/', methods=['GET'])
 @app.route('/search', methods=['GET'])
-# @app.route('/search', methods=['GET'])
 def index():
     keyword = request.args.get('keyword', None)
     page = int(request.args.get('page', 1))
@@ -54,8 +55,6 @@ def index():
 
     if current_path.endswith('/'):
         current_path += '?'
-
-    print(page)
 
     return render_template(
         'index.html',
@@ -136,9 +135,10 @@ def login():
 @app.route('/movie/<movie_id>', methods=['GET'])
 def movie_detail(movie_id):
     movie = Movie.query.filter_by(brief_id=movie_id).first()
+    comments = movie.comments.all()
     if not movie:
         abort(404)
-    return render_template('movie_detail.html', movie=movie, user=current_user)
+    return render_template('movie_detail.html', movie=movie, user=current_user, comments=comments)
 
 
 @app.route('/watch/<movie_id>', methods=['GET'])
@@ -236,14 +236,26 @@ def register():
 
 
 @login_required
-@app.route('/user/consume_records', methods=['GET'])
+@app.route('/user/consume_history', methods=['GET'])
 def custom_records():
-    return render_template('consume_records.html', user=current_user)
+    consume_records = ConsumeRecord.query.filter_by(consumer=current_user).all()
+    return render_template('consume_history.html', user=current_user, consume_records=consume_records)
 
 
 @login_required
-@app.route('/user/profile', methods=['GET'])
+@app.route('/user/profile', methods=['GET', 'POST'])
 def profile():
+    if request.method == 'POST':
+        new_username = request.form.get('username')
+        new_phone_number = request.form.get('phone_number')
+        print(new_username, new_phone_number)
+
+        u = User.query.get(current_user.get_id())
+        u.username = new_username
+        u.phone_number = new_phone_number
+        db.session.add(u)
+        db.session.commit()
+
     return render_template('profile.html', user=current_user)
 
 

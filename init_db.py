@@ -65,13 +65,19 @@ def gen_comment(amount=100):
         '过于浓重的说教意味，毫无逻辑的人物设定',
         '很棒，有史诗的感觉，画面感各方面都不错，特效也不错',
         '看完了，没有说的那么好看，情节上好多都比较牵强',
+        '是我最喜欢的系列之一',
+        '我料想过它好，可没想过居然这么好，一部电影，故事，角色，演员，情感，内涵，光影，剪辑的运用。',
+        '能有一方面做好便已经难得，而它居然全部都做到了。',
+
     ]
 
     for i in range(amount):
-        u = random.choice(User.query.all())
+        u1 = random.choice(User.query.all())
+        u2 = random.choice(User.query.all())
         m = random.choice(Movie.query.all())
         c = Comment(
-            user=u,
+            from_user=u1,
+            to_user=u2,
             movie=m,
             comment_time=datetime.datetime.now() + datetime.timedelta(fake.random_digit()),
             content=random.choice(comments),
@@ -100,6 +106,9 @@ def gen_consume_record(amount=100):
     for i in range(amount):
         u = random.choice(User.query.all())
         m = random.choice(Movie.query.all())
+
+        u.balance += 75
+
         money = MoviePrice.query.get(m.id).price
 
         if u.balance > money:
