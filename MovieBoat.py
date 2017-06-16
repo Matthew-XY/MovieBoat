@@ -49,7 +49,7 @@ def index():
     pagination = Pagination(page, PER_PAGE, len(movies))
 
     tmp = (page - 1) * PER_PAGE
-    movies = movies[tmp:tmp + 8]
+    movies = movies[tmp:tmp + PER_PAGE]
 
     current_path = request.url.split('page')[0]
 
@@ -238,8 +238,25 @@ def register():
 @login_required
 @app.route('/user/consume_history', methods=['GET'])
 def custom_records():
+    page = int(request.args.get('page', 1))
+    PER_PAGE = 3
+
     consume_records = ConsumeRecord.query.filter_by(consumer=current_user).all()
-    return render_template('consume_history.html', user=current_user, consume_records=consume_records)
+
+    pagination = Pagination(page, PER_PAGE, len(consume_records))
+
+    tmp = (page - 1) * PER_PAGE
+    consume_records = consume_records[tmp:tmp + PER_PAGE]
+    current_path = request.url.split('page')[0] + '?'
+
+    return render_template(
+        'consume_history.html',
+        user=current_user,
+        consume_records=consume_records,
+        pagination=pagination,
+        current_page=page,
+        current_path=current_path,
+    )
 
 
 @login_required

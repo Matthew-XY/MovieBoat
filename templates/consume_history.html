@@ -21,18 +21,18 @@
                             <i class="edit icon"></i>账户设置
                         </a>
                         <a class="active teal item" href="/user/consume_history">
-                            <i class="key icon"></i>消费历史
+                            <i class="history icon"></i>消费历史
                         </a>
                         <a class="item" href="/user/change_password">
-                            <i class="lock icon"></i> 修改密码
+                            <i class="key icon"></i> 修改密码
                         </a>
-                        <a class="item" href="./notifications.html">
-                            <i class="chat icon"></i> 消息队列
+                        <a class="item" href="/user/messages">
+                            <i class="chat icon"></i> 消息
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="twelve wide column">
+            <div class="thirteen wide column">
                 <div class="pageHeader">
                     <div class="segment">
                         <h3 class="ui dividing header">
@@ -46,50 +46,73 @@
                 </div>
                 <!--the products content-->
 
-                {% for record in consume_records[0:2] %}
+                {% for record in consume_records %}
+                    <span style="color: darkred">
+                    {{ record.consumer.username }}观看/购买于
+                    {{ record.consume_time.strftime("%Y-%m-%d") }}
+                    {{ moment(record.consume_time).fromNow() }}
+                    </span>
                     <div class="ui four column grid segment">
                         <div class="row">
-                            {#                            <div class="ui info segment">#}
-                            {#                                <h5 class="ui header">#}
-                            {#                                    电影 <span class="ui type label" title="平台公开">平台公开</span>#}
-                            {#                                    <div class="sub header">这是一个测试中，还未发布的产品。</div>#}
-                            {#                                </h5>#}
-                            <div class="three wide column">
-                                    <a class="ui image" href="/movie/{{ record.movie.brief_id }}">
-                                        <img src="{{ record.movie.cover }}">
-                                    </a>
+
+                            <div class="five wide column">
+                                <br> <br> <br> <br><br>
+                                <a class="ui image" href="/movie/{{ record.movie.brief_id }}">
+                                    <img src="{{ record.movie.cover }}">
+                                </a>
+
                             </div>
-                            {#                                <p>模板设备： <a class="externalUrl" href="./device.html" title="模板设备">设备01</a></p>#}
-                            {#                                <p>已生成： <span class="stress">3</span> 批次</p>#}
-                            {#                                <p>已激活： <span class="stress">23 / 50</span>，46.0%</p>#}
-                            {#                            </div>#}
+
+
+                            <div class="seven wide column">
+                                <span style="font-size:2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ record.movie.title }}</span>
+
+                                {% for item in record.movie.info.split('\n')[0:-2] %}
+                                    {% if item.startswith('豆') or item.startswith('类型') or item.startswith('片') %}
+                                        <p class="tiny-title">{{ item }}</p>
+                                    {% endif %}
+
+                                {% endfor %}
+                                <div class="extra content">
+                                    <span style="font-size: 2em"> ￥ <span
+                                            style="color: grey;"> 19.0 </span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
 
-                <!--the pagination-->
-                <div class="ui pagination menu">
-                    <a class="icon item">
-                        <i class="icon left arrow"></i>
-                    </a>
-                    <a class="active item">
-                        1
-                    </a>
-                    <div class="disabled item">
-                        ...
+                <div class="ui container">
+                    <div class="ui pagination big menu right floated">
+
+                        {% if pagination.has_prev %}
+                            <a class="icon item" href="{{ current_path }}page={{ current_page-1 }}">
+                                <i class="icon left arrow"></i>
+                            </a>
+                        {% endif %}
+
+                        {% for page in pagination.iter_pages() %}
+
+                            {% if not page %}
+                                <a class="item">
+                                    ...
+                                </a>
+                            {% else %}
+                                <a class="item" href="{{ current_path }}page={{ page }}">
+                                    {{ page }}
+                                </a>
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        {% if pagination.has_next %}
+                            <a class="icon item" href="{{ current_path }}page={{ current_page+1 }}">
+                                <i class="icon right arrow"></i>
+                            </a>
+                        {% endif %}
                     </div>
-                    <a class="item">
-                        4
-                    </a>
-                    <a class="item">
-                        5
-                    </a>
-                    <a class="item">
-                        6
-                    </a>
-                    <a class="icon item">
-                        <i class="icon right arrow"></i>
-                    </a>
                 </div>
             </div>
         </div>
