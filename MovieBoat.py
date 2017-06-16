@@ -276,6 +276,25 @@ def profile():
     return render_template('profile.html', user=current_user)
 
 
+@login_required
+@app.route('/user/change_password', methods=['GET', 'POST'])
+def change_password():
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        password_repeated = request.form.get('password_repeated')
+
+        if new_password == password_repeated:
+            u = User.query.get(current_user.get_id())
+            print(u.password)
+            u.password = new_password
+            print(u.password)
+
+            db.session.add(u)
+            db.session.commit()
+
+    return render_template('change_password.html', user=current_user)
+
+
 if __name__ == '__main__':
     init_login()
     app.run(debug=True)
