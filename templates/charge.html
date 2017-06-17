@@ -1,10 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}{{ user.username }}--用户中心{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('zh_CN') }}
+{% endblock %}
+
+{% block content %}
+
+
+
+    <!--the main content begin-->
+    <div class="container">
+        <!--the content-->
+        <div class="ui grid">
+            <div class="two wide column"></div>
+            <!--the vertical menu-->
+            <div class="four wide column">
+                <div class="verticalMenu">
+                    <div class="ui vertical pointing menu fluid">
+                        <a class="active teal item" href="/user/profile">
+                            <i class="edit icon"></i>账户设置
+                        </a>
+                        <a class="item" href="/user/consume_history">
+                            <i class="history icon"></i>消费历史
+                        </a>
+                        <a class="item" href="/user/change_password">
+                            <i class="lock icon"></i> 修改密码
+                        </a>
+                        <a class="item" href="/user/message">
+                            <i class="chat icon"></i> 消息
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="twelve wide column">
+                <div class="pageHeader">
+                    <div class="segment">
+                        <h3 class="ui dividing header">
+                            <i class="large yen icon"></i>
+                            <div class="content">
+                                充值
+                                <div class="sub header">请选择要充值的金额</div>
+                            </div>
+                        </h3>
+                    </div>
+                </div>
+                <!--the user_profile form-->
+                <div class="ui form vertical segment">
+                    <form action="/user/charge" method="POST">
+                        <div class="field">
+                            <div id="5_yuan" class="ui negative basic button">
+                                <label>￥5</label>
+                            </div>
+                            <div id="10_yuan" class="ui basic button">
+                                <label>￥10</label>
+                            </div>
+                            <div id="20_yuan" class="ui basic button">
+                                <label>￥20</label>
+                            </div>
+                            <div id="100_yuan" class="ui basic button">
+                                <label>￥100</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <input id="charge_amount" hidden name="charge_amount" value="5">
+                        </div>
+                        <input class="ui small blue submit button" type="submit" value="充值">
+                        <input class="ui small basic button" type="reset" value="取消">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        $('.ui.dropdown')
+            .dropdown();
+
+        var charge_amount = 5;
+
+
+        $('.ui.basic.button').click(
+            function () {
+                $('#5_yuan').attr('class', 'ui basic button');
+                $('#10_yuan').attr('class', 'ui basic button');
+                $('#20_yuan').attr('class', 'ui basic button');
+                $('#100_yuan').attr('class', 'ui basic button');
+                $(this).attr('class', 'ui negative basic button');
+                charge_amount = $(this).attr("id").split('_')[0];
+                $('#charge_amount').val(charge_amount);
+            }
+        )
+
+
+    </script>
+
+
+{% endblock %}

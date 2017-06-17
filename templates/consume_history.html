@@ -13,8 +13,9 @@
     <div class="container">
         <!--the content-->
         <div class="ui grid">
+            <div class="two wide column"></div>
             <!--the vertical menu-->
-            <div class="five wide column">
+            <div class="four wide column">
                 <div class="verticalMenu">
                     <div class="ui vertical pointing menu fluid">
                         <a class="item" href="/user/profile">
@@ -75,7 +76,7 @@
                                 {% endfor %}
                                 <div class="extra content">
                                     <span style="font-size: 2em"> ￥ <span
-                                            style="color: grey;"> 19.0 </span>
+                                            style="color: grey;"> {{ record.movie.movie_price.first().price }} </span>
                                     </span>
                                 </div>
                             </div>

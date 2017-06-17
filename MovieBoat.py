@@ -191,10 +191,23 @@ def consume():
     return jsonify(ret)
 
 
-@login_required
-@app.route('/user/charge', methods=['GET'])
+@app.route('/user/charge', methods=['GET', 'POST'])
 def charge():
-    return render_template()
+    if request.method == 'POST':
+        charge_amount = int(request.form.get('charge_amount'))
+        u = User.query.get(current_user.get_id())
+        u.balance += charge_amount
+
+        cr = ChargeRecord(
+            user=u,
+            charge_time=datetime.datetime.utcnow(),
+            money=charge_amount
+        )
+        db.session.add(cr)
+        db.session.add(u)
+        db.session.commit()
+
+    return render_template('charge.html', user=current_user)
 
 
 @app.route('/register', methods=['POST'])
