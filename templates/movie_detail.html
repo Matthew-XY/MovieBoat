@@ -7,11 +7,6 @@
     {{ moment.include_moment() }}
     {{ moment.lang('zh_CN') }}
 
-    <link rel="stylesheet" type="text/css" href="../static/bt0/socicon.css">
-    <link rel="stylesheet" type="text/css" href="../static/bt0/lightbox.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/bt0/iconsmind.css">
-    <link rel="stylesheet" type="text/css" href="../static/bt0/theme.css">
-    <link rel="stylesheet" type="text/css" href="../static/bt0/customv12.css">
 {% endblock %}
 
 {% block content %}
@@ -23,6 +18,20 @@
             padding: 1.85714286em;
             margin-bottom: 30px;
         }
+
+        .boxed:not([class*='bg-']) {
+            background: #ffffff;
+        }
+
+        body {
+            font-size: 1em;
+            line-height: 1.85714286em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Open Sans', 'Helvetica', 'Arial', sans-serif;
+            color: #666666;
+            font-weight: 400;
+        }
     </style>
 
 
@@ -30,24 +39,22 @@
         <div class="ui row">
             <dvi class="three wide column"></dvi>
             <div class="three wide column">
-                <div class="masonry__container masonry--active" style="position: relative; height: 489px;">
-                    <div class="masonry__item" style="position: absolute; left: 0px; top: 0px;">
-                        <div class="hover-shadow">
-                            <img alt="{{ movie.title }}"
-                                 src="{{ movie.cover }}">
-                        </div>
-                        <a id="watch" class="btn bg--googleplus">
-                            <span class="btn__text">观看视频</span>
-                        </a>
-                        <a class="btn bg--primary">
-                            <span class="btn__text">购买视频</span>
-                        </a>
+                <div class="" style="position: absolute; left: 0px; top: 0px;">
+                    <div class="hover-shadow">
+                        <img alt="{{ movie.title }}"
+                             src="{{ movie.cover }}">
                     </div>
+                    <button id="watch" class="ui blue button">
+                        观看视频
+                    </button>
+                    <button class="ui red button">
+                        购买视频
+                    </button>
                 </div>
             </div>
-            <dvi class="two wide column"></dvi>
+            <div class="two wide column"></div>
             <div class="six wide column">
-                <div class="masonry__item boxed">
+                <div class="boxed">
                     <span style="font-size: 2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ movie.title }}</span>
                     <div class="tinfo">
                         {% for item in movie.info.split('\n')[0:-2] %}
