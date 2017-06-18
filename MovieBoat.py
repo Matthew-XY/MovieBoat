@@ -132,12 +132,29 @@ def login():
     return jsonify(ret)
 
 
-@app.route('/movie/<movie_id>', methods=['GET'])
+@app.route('/movie/<movie_id>', methods=['GET', 'POST'])
 def movie_detail(movie_id):
     movie = Movie.query.filter_by(brief_id=movie_id).first()
+    if request.method == 'POST':
+        print(request.form.get('comment'))
+        comment = request.form.get('comment')
+        u = User.query.filter_by(id=current_user.get_id()).first()
+
+        c = Comment(
+            from_user=u,
+            to_user=None,
+            movie=movie,
+            comment_time=datetime.datetime.now(),
+            content=comment,
+            point=5,
+        )
+        db.session.add(c)
+        db.session.commit()
+
     comments = movie.comments.all()
     if not movie:
         abort(404)
+
     return render_template('movie_detail.html', movie=movie, user=current_user, comments=comments)
 
 
@@ -310,4 +327,4 @@ def change_password():
 
 if __name__ == '__main__':
     init_login()
-    app.run(debug=True,port=5001)
+    app.run(debug=True, port=5001)

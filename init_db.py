@@ -73,7 +73,11 @@ def gen_comment(amount=100):
 
     for i in range(amount):
         u1 = random.choice(User.query.all())
-        u2 = random.choice(User.query.all())
+        u2 = None
+
+        if random.randint(0, 10) % 2 == 0:
+            u2 = random.choice(User.query.all())
+
         m = random.choice(Movie.query.all())
         c = Comment(
             from_user=u1,
