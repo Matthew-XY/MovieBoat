@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="../static/favicon.ico">
+
     <title>{% block title %}{% endblock %}</title>
 
     {% block scripts %}
@@ -38,7 +42,7 @@
 </style>
 
 
-<div class="ui  fixed large top inverted menu grey">
+<div class="ui fixed large top inverted menu grey">
     <div class="ui container">
         <a href="/" class="item">电影船</a>
         {% if user.is_authenticated %}

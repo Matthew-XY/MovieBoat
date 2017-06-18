@@ -6,94 +6,97 @@
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang('zh_CN') }}
+
+    <link rel="stylesheet" type="text/css" href="../static/bt0/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../static/bt0/socicon.css">
+    <link rel="stylesheet" type="text/css" href="../static/bt0/lightbox.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/bt0/iconsmind.css">
+    <link rel="stylesheet" type="text/css" href="../static/bt0/theme.css">
+    <link rel="stylesheet" type="text/css" href="../static/bt0/customv12.css">
 {% endblock %}
 
 {% block content %}
-    <style>
-        .tiny-title {
-            color: purple !important;
-            display: block;
-            font-size: large;
-            margin-bottom: .9em;
-        }
-    </style>
-    <div class="ui container center aligned" style="margin-bottom: 200px;">
-    </div>
 
 
-    <div class="ui grid">
 
-        <div class="row">
+    <div class="container">
+        <div class="row" style="padding-bottom: 3em;">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="masonry masonry-demos col-md-4">
+                        <div class="masonry__container masonry--active" style="position: relative; height: 489px;">
+                            <div class="masonry__item" style="position: absolute; left: 0px; top: 0px;">
+                                <div class="hover-shadow">
+                                    <img alt="{{ movie.title }}"
+                                         src="{{ movie.cover }}">
+                                </div>
+                                <a id="watch" class="btn bg--googleplus">
+                                    <span class="btn__text">观看视频</span>
+                                </a>
+                                <a class="btn bg--primary">
+                                    <span class="btn__text">购买视频</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="masonry__item col-md-8 boxed">
+                        <span style="font-size: 2em;font-weight: 700;color:#be997f;display: block;margin-bottom: .5em">{{ movie.title }}</span>
+                        <div class="tinfo">
+                            {% for item in movie.info.split('\n')[0:-2] %}
+                                {% if not item.startswith('豆瓣') %}
+                                    <p class="tiny-title">{{ item }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <hr>
+                        <span
+                                style="font-size: 2em;font-weight: 700;color:#fc9b35;">
+                            {% for item in movie.info.split('\n')[0:-2] %}
+                                {% if item.startswith('豆瓣') %}
+                                    {{ item }}
+                                {% endif %}
+                            {% endfor %}
 
-            <div class="three wide column"> </div>
-
-            <div class="three wide column">
-                <div class="image">
-                    <a href="/movie/{{ movie.brief_id }}">
-                        <img src="{{ movie.cover }}">
-                    </a>
+                        </span>
+                        <article class="information-text">
+                            {{ movie.summary }}
+                        </article>
+                    </div>
                 </div>
-                <button id="watch" class="ui large positive  button">观看视频</button>
-                <button class="ui large negative button">点击购买</button>
-            </div>
-            <div class="three wide column"> </div>
-
-            <div class="six wide column" style="background-color: #44ffff">
-                <span style="font-size: xx-large;font-weight: 700;color:red;display: block;margin-bottom: .5em">{{ movie.title }}</span>
-
-                {% for item in movie.info.split('\n')[0:-2] %}
-                    <p class="tiny-title">{{ item }}</p>
-                {% endfor %}
-
             </div>
         </div>
+    </div>
 
-
-        <div class="ui container">
-            <div class="eight wide column" style="background-color: yellow">
-                <span style="font-size: 1.9em;font-weight: 700;color:#44ffff;margin-bottom: .5em;display: block">剧情:</span>
-                <p style="font-size: 1.2em">{{ movie.summary[0:512] }}...</p>
-            </div>
-
-        </div>
-
-
-
-        <div class="ui container">
-            <div class="ui comments">
-                <h3 class="ui dividing header">用户评论</h3>
-                {% for comment in comments %}
-                    <div class="comment">
-                        <div class="avatar">
-                            <img class="ui medium circular image" src="{{ comment.from_user.avatar }}">
+    <div class="col-md-offset-3">
+        <div class="ui comments">
+            <h3 class="ui dividing header">用户评论</h3>
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="avatar">
+                        <img class="ui medium circular image" src="{{ comment.from_user.avatar }}">
+                    </div>
+                    <div class="content">
+                        <a class="author">{{ comment.from_user.username }}</a>
+                        <div class="metadata">
+                            <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
+                            <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
                         </div>
-                        <div class="content">
-                            <a class="author">{{ comment.from_user.username }}</a>
-                            <div class="metadata">
-                                <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
-                                <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
-                            </div>
-                            <div class="text" style="font-size: 1.2em">{{ comment.content }}</div>
-                            <div class="actions">
-                                <a class="reply">回复</a>
-                            </div>
+                        <div class="text" style="font-size: 1.2em">{{ comment.content }}</div>
+                        <div class="actions">
+                            <a class="reply">回复</a>
                         </div>
                     </div>
-                {% endfor %}
-                <form class="ui reply form">
-                    <div class="field">
-                        <textarea></textarea>
-                    </div>
-                    <div id="comment" class="ui blue labeled submit icon button"><i class="icon edit"></i>添加评论</div>
-                </form>
-            </div>
-
+                </div>
+            {% endfor %}
+            <form class="ui reply form">
+                <div class="field">
+                    <textarea></textarea>
+                </div>
+                <div id="comment" class="ui blue labeled submit icon button"><i class="icon edit"></i>添加评论</div>
+            </form>
         </div>
 
     </div>
-
-
-
 
     <script>
         $('#watch').click(
@@ -109,7 +112,4 @@
         )
 
     </script>
-
-
-
 {% endblock %}
