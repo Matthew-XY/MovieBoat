@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import jinja2
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
@@ -20,20 +20,27 @@ class UserView(ModelView):
     column_labels = dict(
         id='ID',
         username='用户名',
-        password_hash='昵称',
+        password_hash='密码',
         phone_number='电话',
         avatar='头像',
         balance='余额',
     )
 
-    column_display_pk = True
+    def _avatar(view, context, model, name):
+        if model.avatar:
+            return jinja2.Markup('<img src="{}">'.format(model.avatar))
 
-    column_filters = (
-        'username',
-        'phone_number',
+    column_formatters = dict(
+        avatar=_avatar,
     )
 
-    column_searchable_list = column_filters
+    column_display_pk = True
+
+    column_searchable_list = (
+        'username',
+        'phone_number',
+
+    )
 
     column_exclude_list = (
         'password_hash'
@@ -49,41 +56,78 @@ class CommentView(ModelView):
     column_labels = dict(
         id='ID',
         from_user='用户',
-        to_user='被评论用户',
+        movie='电影',
         comment_time='评论时间',
         content='评论内容',
         point='评分',
     )
 
-    column_filters = (
-    )
-
-    column_searchable_list = column_filters
-
     column_exclude_list = (
+        'to_user'
     )
+
+
+class MovieView(ModelView):
+    can_create = False
+    can_view_details = True
+
+    column_labels = dict(
+        title='电影',
+        price='价格',
+        brief_id='短ID',
+        cover='海报',
+        info='信息',
+        summary='剧情简介',
+        video_uri='视频地址',
+    )
+
+    form_columns = (
+        'title',
+        'brief_id',
+        'cover',
+        'info',
+        'summary',
+        'video_uri',
+    )
+
+    def _cover(view, context, model, name):
+        if model.cover:
+            return jinja2.Markup('<img src="{}">'.format(model.cover))
+
+    def _video_uri(view, context, model, name):
+        if model.video_uri:
+            return jinja2.Markup('<a hre="{}">'.format(model.video_uri))
+
+    def _info(view, context, model, name):
+        if model.info:
+            return model.info[0:20]
+
+    def _summary(view, context, model, name):
+        if model.summary:
+            return model.summary[0:40]
+
+    column_formatters = dict(
+        cover=_cover,
+        info=_info,
+        summary=_summary,
+        video_uri=_video_uri,
+    )
+
+    column_display_pk = False
 
 
 class MoviePriceView(ModelView):
     can_create = False
-    can_view_details = True
 
     column_labels = dict(
         movie='电影',
         price='价格',
     )
 
-    column_filters = (
-    )
-
-    column_searchable_list = column_filters
-
-    column_exclude_list = (
-    )
-
 
 class ConsumeRecordview(ModelView):
     can_create = False
+    can_edit = False
     can_view_details = True
 
     column_labels = dict(
@@ -93,16 +137,10 @@ class ConsumeRecordview(ModelView):
         consumer='用户',
     )
 
-    column_filters = (
-    )
-
-    column_searchable_list = column_filters
-
-    column_exclude_list = (
-    )
 
 class ChargeRecordView(ModelView):
     can_create = False
+    can_edit = False
     can_view_details = True
 
     column_labels = dict(
@@ -111,17 +149,13 @@ class ChargeRecordView(ModelView):
         user='用户',
     )
 
-    column_filters = (
-    )
+    column_searchable_list = []
 
-    column_searchable_list = column_filters
-
-    column_exclude_list = (
-    )
 
 admin = Admin(app, name='电影船后台管理')
 
 admin.add_view(UserView(User, db.session, name='用户'))
+admin.add_view(MovieView(Movie, db.session, name='电影'))
 admin.add_view(CommentView(Comment, db.session, name='用户评论'))
 admin.add_view(MoviePriceView(MoviePrice, db.session, name='价格'))
 admin.add_view(ConsumeRecordview(ConsumeRecord, db.session, name='购买记录'))

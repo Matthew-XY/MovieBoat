@@ -42,12 +42,16 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    def __str__(self):
+        return self.username
+
 
 class Comment(db.Model):
     id = db.Column(db.String(32), primary_key=True)
 
     from_user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
-    from_user = db.relationship('User', backref=db.backref('comments_from_user', lazy='dynamic'), foreign_keys=[from_user_id])
+    from_user = db.relationship('User', backref=db.backref('comments_from_user', lazy='dynamic'),
+                                foreign_keys=[from_user_id])
 
     to_user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), nullable=True, doc='用户ID')
     to_user = db.relationship('User', backref=db.backref('comments_to_user', lazy='dynamic'), foreign_keys=[to_user_id])
@@ -82,6 +86,9 @@ class Movie(db.Model):
 
     def __repr__(self):
         return '<Movie {}>'.format(self.title)
+
+    def __str__(self):
+        return self.title
 
 
 class MoviePrice(db.Model):

@@ -51,6 +51,18 @@ def index():
     tmp = (page - 1) * PER_PAGE
     movies = movies[tmp:tmp + PER_PAGE]
 
+    if current_user.is_authenticated:
+        for movie in movies:
+            movie.can_watche = False
+
+        consume_records = ConsumeRecord.query.filter_by(consumer=current_user).all()
+        bought_moveis = [record.movie for record in consume_records]
+        print(bought_moveis)
+
+        for movie in movies:
+            if movie in bought_moveis:
+                movie.can_watched = True
+
     current_path = request.url.split('page')[0]
 
     if current_path.endswith('/'):
@@ -152,10 +164,24 @@ def movie_detail(movie_id):
         db.session.commit()
 
     comments = movie.comments.all()
+
+    can_watched = False
+    if current_user.is_authenticated:
+        consume_records = ConsumeRecord.query.filter_by(consumer=current_user).all()
+        bought_moveis = [record.movie for record in consume_records]
+        if movie in bought_moveis:
+            can_watched = True
+
     if not movie:
         abort(404)
 
-    return render_template('movie_detail.html', movie=movie, user=current_user, comments=comments)
+    return render_template(
+        'movie_detail.html',
+        movie=movie,
+        user=current_user,
+        comments=comments,
+        can_watched=can_watched,
+    )
 
 
 @app.route('/watch/<movie_id>', methods=['GET'])

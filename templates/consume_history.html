@@ -79,6 +79,11 @@
                                             style="color: grey;"> {{ record.movie.movie_price.first().price }} </span>
                                     </span>
                                 </div>
+                                <button id="watch" class="ui blue button large"
+                                        value="/watch/{{ record.movie.brief_id }}">
+                                    <i class="video play icon"></i>
+                                    观看视频
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -118,4 +123,13 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $('#watch').click(
+            function () {
+                window.location = $(this)[0].value;
+            }
+        )
+    </script>
+
 {% endblock %}

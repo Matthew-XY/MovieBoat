@@ -38,20 +38,19 @@
                 </div>
             </form>
         </div>
-    </div>
-
-    {% if keyword %}
-        <div class="ui container">
-            <div class="ui info message">
-                {#                <i class="close icon"></i>#}
-                <div class="header">
-                    <p>以下是搜索关键词<span style="color:red">{{ keyword }}</span>得到的结果</p>
-                    <p>共有<span style="color:red">{{ movies.__len__() }}</span>条记录</p>
+        {% if keyword %}
+            <div class="ui container" style="margin-bottom: ">
+                <div class="ui info message">
+                    <div class="header">
+                        <p>以下是搜索关键词<span style="color:red">{{ keyword }}</span>得到的结果</p>
+                        <p>共有<span style="color:red">{{ movies.__len__() }}</span>条记录</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
 
+
+    </div>
 
 
 
@@ -95,7 +94,17 @@
                                 </span>
                         </div>
                     </div>
-                    <button id="consume_{{ movie.brief_id }}" class="ui button negative large">点击购买</button>
+                    {% if movie.can_watched %}
+                        <button id="watch" class="ui blue button large" value="/watch/{{ movie.brief_id }}">
+                            <i class="video play icon"></i>
+                            观看视频
+                        </button>
+                    {% else %}
+                        <button id="consume_{{ movie.brief_id }}" class="ui button negative large">
+                            <i class="video play icon"></i>
+                            点击购买
+                        </button>
+                    {% endif %}
                 </div>
             {% endfor %}
         {% endfor %}
@@ -170,6 +179,11 @@
 
 
     <script>
+        $('#watch').click(
+            function () {
+                window.location = $(this)[0].value;
+            }
+        )
         var movie_brief_id = $(this).attr("id");
         $('.button.negative.large').click(
             function () {
