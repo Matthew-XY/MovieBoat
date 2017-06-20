@@ -35,7 +35,6 @@
     </style>
 
 
-
     <div class="ui grid">
         <div class="ui row">
             <dvi class="three wide column"></dvi>
@@ -112,48 +111,48 @@
 
             </div>
         </div>
+        <div class="four wide column"></div>
         <div class="ui row">
-            <dvi class="four wide column"></dvi>
+            <div class="four wide column"></div>
             <div class="ui comments">
                 <h3 class="ui dividing header">用户评论</h3>
                 {% for comment in comments %}
-                    {% if comment.to_user %}
-                        <div class="comment">
-                            <div class="avatar">
-                                <img class="ui medium circular image" src="{{ comment.to_user.avatar }}">
+                    <div class="comment">
+                        <div class="avatar">
+                            <img class="ui medium circular image" src="{{ comment.user.avatar }}">
+                        </div>
+                        <div class="content">
+                            <a class="author">{{ comment.user.username }}</a>
+                            <div class="metadata">
+                                <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
+                                <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
                             </div>
-                            <div class="content">
-                                <a class="author">{{ comment.to_user.username }}</a>
-                                <div class="metadata">
-                                    <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
-                                    <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
+                            <div class="text" style="font-size: 1.2em">{{ comment.content }}</div>
+                            <div class="reply" id="{{ comment.id }}"> 回复</div>
+                        </div>
+                    </div>
+
+                    {% if comment.replies.all() %}
+                        <div class="comments" style="margin-left: 20px">
+                            {% for reply in comment.replies.all() %}
+                                <div class="comment">
+                                    <a class="avatar">
+                                        <img class="ui medium circular image" src="{{ reply.user.avatar }}">
+                                    </a>
+                                    <div class="content">
+                                        <a class="author">{{ reply.user.username }}</a>
+                                        <div class="metadata">
+                                            <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
+                                            <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
+                                        </div>
+                                        <div class="text" style="font-size: 1.2em">{{ reply.content }}</div>
+                                    </div>
                                 </div>
-                                <div class="text" style="font-size: 1.2em">{{ comment.content }}</div>
-                                <div class="actions">
-                                    <a class="reply">回复</a>
-                                </div>
-                            </div>
+
+                            {% endfor %}
                         </div>
                     {% endif %}
 
-                    <div class="comments">
-                        <div class="comment">
-                            <a class="avatar">
-                                <img class="ui medium circular image" src="{{ comment.from_user.avatar }}">
-                            </a>
-                            <div class="content">
-                                <a class="author">{{ comment.from_user.username }}</a>
-                                <div class="metadata">
-                                    <span class="date">{{ comment.comment_time.strftime("%Y-%m-%d") }}</span>
-                                    <span class="date">{{ moment(comment.comment_time).fromNow() }}</span>
-                                </div>
-                                <div class="text" style="font-size: 1.2em">{{ comment.content }}</div>
-                                <div class="actions">
-                                    <a class="reply">回复</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 {% endfor %}
                 <form class="ui reply form" action="{{ request.path }}" method="POST">
                     <div class="field">
@@ -169,9 +168,10 @@
                     {% endif %}
                 </form>
             </div>
-        </div>
 
+        </div>
     </div>
+
 
     <div id="consume_modal" class="ui modal" style="width: 700px">
         <i class="close icon"></i>
@@ -211,7 +211,23 @@
             function () {
                 window.location = '/watch/{{ movie.brief_id }}'
             }
-        )
+        );
+
+        {#        $('.reply').click(#}
+        {#            function () {#}
+        {#                var form_id = $(this)[0].id;#}
+        {##}
+        {##}
+        {#                var _html = '<form action="/reply/"' + 'method="POST"'#}
+        {#                var _html = _html + '>' + '<input type="text"'#}
+        {#                var _html = _html + '>' + '<input type="submit"'#}
+        {#                var _html = _html + '>' + '</form'#}
+        {#                var _html = _html + '>'#}
+        {##}
+        {#                $(this)[0].innerHTML = _html#}
+        {#                $(this).attr('class', 'replying');#}
+        {#            }#}
+        {#        )#}
 
         var movie_brief_id = $(this).attr("id");
         $('.button.negative.large').click(
@@ -271,5 +287,4 @@
     </script>
 
 
-    </script>
 {% endblock %}

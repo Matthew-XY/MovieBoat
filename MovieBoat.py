@@ -153,8 +153,7 @@ def movie_detail(movie_id):
         u = User.query.filter_by(id=current_user.get_id()).first()
 
         c = Comment(
-            from_user=u,
-            to_user=None,
+            user=u,
             movie=movie,
             comment_time=datetime.datetime.now(),
             content=comment,
@@ -232,6 +231,20 @@ def consume():
         ret['message'] = '余额不足，请先充值!'
 
     return jsonify(ret)
+
+
+@login_required
+@app.route('/user/message', methods=['GET'])
+def message():
+    u = User.query.get(current_user.get_id())
+    messages = []
+    print(u.u_comments.all())
+
+    for comment in u.u_comments.all():
+        for reply in comment.replies.all():
+            messages.append(reply)
+
+    return render_template('message.html', user=current_user, messages=messages)
 
 
 @app.route('/user/charge', methods=['GET', 'POST'])

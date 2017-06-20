@@ -206,8 +206,14 @@
                 function deal_response(response) {
                     switch (response['code']) {
                         case 300:
-                            $('#consume_modal').modal('hide')
+                            alert('购买成功！即将跳转到播放页面')
+                            $('li').text(
+                                response['message']
+                            )
+                            $('.error.message').show()
+                            window.location = '/watch/' + movie_brief_id.split('_')[1]
 
+                            break;
                         case 301:
                             $('li').text(
                                 response['message']

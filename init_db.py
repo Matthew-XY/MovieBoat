@@ -9,7 +9,7 @@ import math
 from faker import Factory
 import pymongo
 
-from models import User, Movie, Comment, ChargeRecord, ConsumeRecord, MoviePrice
+from models import User, Movie, Comment, ChargeRecord, ConsumeRecord, MoviePrice, Reply
 from models import db
 
 fake = Factory.create('zh_CN')
@@ -72,23 +72,46 @@ def gen_comment(amount=100):
     ]
 
     for i in range(amount):
-        u1 = random.choice(User.query.all())
-        u2 = None
-
-        if random.randint(0, 10) % 2 == 0:
-            u2 = random.choice(User.query.all())
-
+        u = random.choice(User.query.all())
         m = random.choice(Movie.query.all())
+
         c = Comment(
-            from_user=u1,
-            to_user=u2,
+            user=u,
             movie=m,
             comment_time=datetime.datetime.now() + datetime.timedelta(fake.random_digit()),
             content=random.choice(comments),
             point=random.choice(range(5)) + 1,
         )
+
         db.session.add(c)
         db.session.commit()
+
+    gen_replies(amount)
+
+
+def gen_replies(amount):
+    for i in range(amount):
+        replies = [
+            '我觉得你说的没有道理',
+            '说得太对了！',
+            '本来以为正片就够尴尬了',
+            '同感！',
+            '强行挑缺点',
+            '能有一方面做好便已经难得',
+        ]
+
+        if random.randint(0, 10) % 2 == 0:
+            u = random.choice(User.query.all())
+            to_comment = random.choice(Comment.query.all())
+            reply = Reply(
+                user=u,
+                to_comment=to_comment,
+                reply_time=datetime.datetime.now() + datetime.timedelta(fake.random_digit()),
+                content=random.choice(replies),
+            )
+
+            db.session.add(reply)
+            db.session.commit()
 
 
 def gen_charge_record(amount=100):

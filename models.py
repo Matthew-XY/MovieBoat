@@ -49,12 +49,8 @@ class User(UserMixin, db.Model):
 class Comment(db.Model):
     id = db.Column(db.String(32), primary_key=True)
 
-    from_user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
-    from_user = db.relationship('User', backref=db.backref('comments_from_user', lazy='dynamic'),
-                                foreign_keys=[from_user_id])
-
-    to_user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), nullable=True, doc='用户ID')
-    to_user = db.relationship('User', backref=db.backref('comments_to_user', lazy='dynamic'), foreign_keys=[to_user_id])
+    user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
+    user = db.relationship('User', backref=db.backref('u_comments', lazy='dynamic'))
 
     movie_id = db.Column(db.String(32), db.ForeignKey('movie.id', ondelete='cascade'))
     movie = db.relationship('Movie', backref=db.backref('comments', lazy='dynamic'))
@@ -69,6 +65,26 @@ class Comment(db.Model):
 
     def __repr__(self):
         return '<Comment {}>'.format(self.id)
+
+
+class Reply(db.Model):
+    id = db.Column(db.String(32), primary_key=True)
+
+    user_id = db.Column(db.String(32), db.ForeignKey('user.id', ondelete='cascade'), doc='用户ID')
+    user = db.relationship('User', backref=db.backref('comments', lazy='dynamic'))
+
+    to_comment_id = db.Column(db.String(32), db.ForeignKey('comment.id', ondelete='cascade'), nullable=True, doc='评论ID')
+    to_comment = db.relationship('Comment', backref=db.backref('replies', lazy='dynamic'), foreign_keys=[to_comment_id])
+
+    reply_time = db.Column(db.DateTime, nullable=False)
+    content = db.Column(db.Text)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.id = uuid1().hex
+
+    def __repr__(self):
+        return '<Reply {}>'.format(self.id)
 
 
 class Movie(db.Model):
