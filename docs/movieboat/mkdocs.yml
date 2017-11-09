@@ -1,0 +1,5 @@
+site_name: 电影船
+pages:
+    - Home: index.md
+theme: readthedocs
+
