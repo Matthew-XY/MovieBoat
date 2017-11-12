@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import shutil
 
 import requests
-import shutil
 from PIL import Image
 
 from models import db, Movie

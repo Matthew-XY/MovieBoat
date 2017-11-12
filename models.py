@@ -5,14 +5,10 @@
 from datetime import datetime
 from uuid import uuid1
 
-from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
-
 from flask_login import UserMixin
 
-from flask_app import app
-
-db = SQLAlchemy(app)
+from app import db
 
 
 class User(UserMixin, db.Model):
