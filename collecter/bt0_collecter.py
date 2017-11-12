@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import pymongo
 
-client = pymongo.MongoClient('localhost')
+client = pymongo.MongoClient('docker')
 db = client['bt0_movie']
 
 

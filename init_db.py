@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 import argparse
 import random
-
 import datetime
-
 import math
+
 from faker import Factory
 import pymongo
 
@@ -15,7 +14,15 @@ from models import db
 fake = Factory.create('zh_CN')
 
 
-def gen_user(amount=50):
+def get_mongo_cursor():
+    client = pymongo.MongoClient('docker')
+    db = client['bt0_movie']
+
+    cursor = db.bt0_movie.find()
+    return cursor
+
+
+def gen_users(amount=50):
     for i in range(amount):
         u = User(username=fake.name(), password='password')
         u.phone_number = fake.phone_number()
@@ -24,15 +31,7 @@ def gen_user(amount=50):
         db.session.commit()
 
 
-def get_mongo_cursor():
-    client = pymongo.MongoClient('localhost')
-    db = client['bt0_movie']
-
-    cursor = db.bt0_movie.find()
-    return cursor
-
-
-def get_movie():
+def get_movies():
     i = 1000
     for item in get_mongo_cursor():
         i += 1
@@ -55,7 +54,7 @@ def get_movie():
         db.session.commit()
 
 
-def gen_comment(amount=100):
+def gen_comments(amount=100):
     comments = [
         '太好看了！而且非常难得的是，电影并没有在经历DCEU几番口碑失败后向Y靠拢，反而是在扎克施耐德打下的原有主题基调下做的更好更成熟',
         '大家快跑啊骗钱的又来了',
@@ -114,7 +113,7 @@ def gen_replies(amount):
             db.session.commit()
 
 
-def gen_charge_record(amount=100):
+def gen_charge_records(amount=100):
     for i in range(amount):
         u = random.choice(User.query.all())
         money = math.floor(random.random() * 20)
@@ -129,7 +128,7 @@ def gen_charge_record(amount=100):
         db.session.commit()
 
 
-def gen_consume_record(amount=100):
+def gen_consume_records(amount=100):
     for i in range(amount):
         u = random.choice(User.query.all())
         m = random.choice(Movie.query.all())
@@ -152,19 +151,20 @@ def gen_consume_record(amount=100):
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument('name', help='你要初始化的表名')
 
     args = parser.parse_args()
 
-    if args.name == 'user':
-        gen_user()
-    elif args.name == 'movie':
-        get_movie()
-    elif args.name == 'comment':
-        gen_comment()
-    elif args.name == 'charge':
-        gen_charge_record()
-    elif args.name == 'consume':
-        gen_consume_record()
+    _mapper = {
+        'user': gen_users,
+        'movie': get_movies,
+        'comment': gen_comments,
+        'charge': gen_charge_records,
+        'consume': gen_consume_records,
+    }
+
+    try:
+        _mapper[args.name]()
+    except KeyError:
+        print("参数不合法")

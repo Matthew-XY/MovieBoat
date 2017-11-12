@@ -5,7 +5,7 @@ import jinja2
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
-from flask_app import app
+from app import app
 
 from models import db
 from models import User, Movie, MoviePrice, ConsumeRecord, ChargeRecord, Comment
